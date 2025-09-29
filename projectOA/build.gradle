@@ -11,7 +11,8 @@ repositories {
 
 dependencies {
     implementation 'com.mysql:mysql-connector-j:8.1.0'
-
+    implementation 'com.github.javafaker:javafaker:1.0.2'
+    implementation 'com.sun.mail:javax.mail:1.6.2'
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

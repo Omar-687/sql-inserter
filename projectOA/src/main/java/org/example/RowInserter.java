@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class RowInserter {
+//    TODO: get rid of these hardcoded credentials
     private static String databaseName = "row_adder_project";
     private static  String url = "jdbc:mysql://localhost:3306/" + databaseName;
     private static  String user = "root";
@@ -40,32 +41,43 @@ public class RowInserter {
 
 
 
-    public static void randomiseInsertion(PreparedStatement sqlStatement,Connection conn, String tableName, int rowAddNum, int columnCount) throws SQLException {
+    public static void randomiseInsertion(PreparedStatement pstmt,
+                                          Connection conn, String tableName,
+                                          int rowAddNum, List<Column> columnList) throws SQLException {
         for (int i = 0; i < rowAddNum; i++){
-            for (int j = 0; j < columnCount; j++){
-                String columnValue = "";
-//                TODO
+            for (int j = 0; j < columnList.size(); j++){
+                Column column = columnList.get(j);
+                if (column.isAutoIncrement()){
+                    continue;
+                }
+                Object randomColumnValue = RandomValueGenerator.generateRandomValue(column);
+//              TODO:  deal with null value later
+                Boolean isValidValue = Validator.isValid(randomColumnValue.toString(), column);
+                if (!isValidValue){
+                    throw new IllegalArgumentException();
+                }
+
+                pstmt.setString(j + 1, randomColumnValue.toString());
             }
 
+            pstmt.addBatch();
+
         }
+        DatabaseUtils.executeBatchWithTransaction(conn, pstmt);
 
 
-
-
-//        for (int i = 0; i < rowAddNum; i++){
-//
-//        }
 
     }
     public static String buildSQLInsert(String tableName, int columnCount, List<Column> columnsList){
         StringBuilder sqlCommand = new StringBuilder("INSERT INTO " + tableName + " (");
         for (int i = 0; i < columnCount; i++){
             Column column = columnsList.get(i);
+
             sqlCommand.append(column.getName());
             if (i + 1 == columnCount){
                 sqlCommand.append(")");
             }
-            else{
+            if (i + 1 != columnCount){
                 sqlCommand.append(", ");
             }
 
@@ -73,11 +85,13 @@ public class RowInserter {
         }
         sqlCommand.append(" VALUES (");
         for (int i = 0; i < columnCount; i ++){
+            Column column = columnsList.get(i);
+
             sqlCommand.append("?");
             if (i + 1 == columnCount){
                 sqlCommand.append(")");
             }
-            else{
+            if (i + 1 != columnCount){
                 sqlCommand.append(", ");
             }
         }
@@ -92,30 +106,7 @@ public class RowInserter {
             throw new Error("Table doesn't exist");
         }
 
-//        DatabaseMetaData dbMeta = conn.getMetaData();
-//        String databaseNameFromConnection = conn.getCatalog();
-//        ResultSet columns = dbMeta.getColumns(databaseNameFromConnection, null, tableName,null);
-//
-//
-//        List<Column> columnsList = new ArrayList<>();
-//        int columnCount = 0;
-//        System.out.println("Detailed " + columns+ " " + columns);
-//
-//        while (columns.next()){
-//            String columnName = columns.getString("COLUMN_NAME");
-//            String typeName = columns.getString("TYPE_NAME");
-//            int columnSize = Integer.parseInt(columns.getString("COLUMN_SIZE"));
-//            int nullable = columns.getInt("NULLABLE");
-//
-//            System.out.println("Column: " + columnName + ", Type: " + typeName);
-//            Column column = new Column(columnName, typeName, columnSize, nullable);
-//            columnsList.add(column);
-//            columnCount += 1;
-//
-//
-//        }
-
-        List<Column> columnsList = DatabaseUtils.getTableColumns(conn, tableName);
+        List<Column> columnsList = DatabaseUtils.getTableColumns(conn, tableName, true);
         int columnCount = columnsList.size();
 
         System.out.println("How many rows to add?");
@@ -127,7 +118,7 @@ public class RowInserter {
         System.out.println("Randomise row insertion?");
         String randomise = scanner.nextLine();
         if ("YES".equals(randomise.toUpperCase())){
-            randomiseInsertion(pstmt, conn, tableName, rowAddNum, columnCount);
+            randomiseInsertion(pstmt, conn, tableName, rowAddNum, columnsList);
             return;
         }
 //
@@ -146,7 +137,6 @@ public class RowInserter {
                     }
                     System.out.println("Invalid value. Please try again.");
                     columnValue = scanner.nextLine();
-
                     isValidValue = Validator.isValid(columnValue, column);
 
 
@@ -159,20 +149,8 @@ public class RowInserter {
 
 
         }
-
-        conn.setAutoCommit(false);
-        try{
-            int[] res = pstmt.executeBatch();
-            conn.commit();
-            System.out.println(res.length + " rows inserted.");
-        } catch (SQLException e) {
-            conn.rollback();
-            System.out.println("Insertion failed. Transaction rolled back.");
-            e.printStackTrace();
-        } finally{
-            conn.setAutoCommit(true);
-            pstmt.close();
-        }
+       System.out.println(pstmt);
+       DatabaseUtils.executeBatchWithTransaction(conn, pstmt);
 
 
 

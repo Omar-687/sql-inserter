@@ -8,11 +8,18 @@ public class Column {
     private int size;
     private int nullable;
     private boolean isNullable;
-    public Column(String name, String type, int size, int nullable){
+    private boolean isPrimaryKey;
+    private boolean isAutoIncrement;
+
+
+    public Column(String name, String type, int size,
+                  int nullable, boolean isPrimaryKey, boolean isAutoIncrement){
         this.name = name;
         this.type = type;
         this.size = size;
         this.nullable = nullable;
+        this.isPrimaryKey = isPrimaryKey;
+        this.isAutoIncrement = isAutoIncrement;
 
         if (this.nullable == DatabaseMetaData.columnNullable){
             this.isNullable = true;
@@ -28,6 +35,15 @@ public class Column {
 
 
 
+    @Override
+    public String toString() {
+        return "Column{" +
+                "name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", size=" + size +
+                ", isNullable=" + isNullable +
+                '}';
+    }
 
 
     public String getName() {
@@ -42,7 +58,12 @@ public class Column {
         return size;
     }
 
-
+    public boolean isPrimaryKey(){
+        return isPrimaryKey;
+    }
+    public boolean isAutoIncrement(){
+        return isAutoIncrement;
+    }
     public void setName(String name) {
         this.name = name;
     }
@@ -54,4 +75,13 @@ public class Column {
     public void setSize(int size) {
         this.size = size;
     }
+
+    public void setPrimaryKey(boolean primaryKey) {
+        isPrimaryKey = primaryKey;
+    }
+
+    public void setAutoIncrement(boolean autoIncrement) {
+        isAutoIncrement = autoIncrement;
+    }
+
 }
