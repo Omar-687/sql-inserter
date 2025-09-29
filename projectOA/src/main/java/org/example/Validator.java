@@ -1,9 +1,15 @@
 package org.example;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+
+
 public class Validator {
+//    TODO: add validation of checks
     public static boolean isValid(String value, Column column){
         String type = column.getType().toUpperCase();
+        String columnName = column.getName().toLowerCase();
         switch (type){
             case "INT":
             case "INTEGER":
@@ -16,6 +22,8 @@ public class Validator {
             case "CHAR":
             case "VARCHAR":
             case "TEXT":
+//                TODO: add more possible checks in future
+                if (columnName.contains("email")) return isEmail(value);
                 return isStringWithinLimits(value, column.getSize());
             case "BOOLEAN":
                 value = value.toLowerCase();
@@ -25,15 +33,30 @@ public class Validator {
         }
         return false;
     }
+    public static boolean isEmail(String value){
+        if (value == null || value.isEmpty()){
+            return false;
+        }
+        try{
+            InternetAddress emailAddress = new InternetAddress(value);
+            emailAddress.validate();
+        } catch (AddressException e) {
+            return false;
+        }
+
+
+        return true;
+    }
+
 
     public static boolean isInteger(String value){
         try{
             Integer.parseInt(value);
-            return true;
         }
         catch (NumberFormatException e){
             return false;
         }
+        return true;
 
 
     }
@@ -41,11 +64,11 @@ public class Validator {
     public static boolean isDouble(String value){
         try{
             Double.parseDouble(value);
-            return true;
         }
         catch (NumberFormatException e){
             return false;
         }
+        return true;
     }
 
     public static boolean isStringWithinLimits(String value, int size){
@@ -58,9 +81,10 @@ public class Validator {
             sdf.parse(value);
         } catch (ParseException e) {
            return false;
-        }
 
-        return false;
+        }
+        return true;
+
     }
 
 

@@ -1,52 +1,58 @@
-# row-adder
+# Row Adder
 
+## 🛠️ Batch SQL Inserter (Java) – Finished Project
 
-# Batch SQL Inserter (Java) – Work in Progress
+This is a Java project designed to perform **batch insertions into a SQL database** using JDBC. It allows users to insert multiple rows—either **manually** or using **randomized values**—via a command-line interface.
 
-This is a Java project focused on performing batch insertions into a SQL database using JDBC. It’s a learning project meant to explore Java backend development, database interaction, and batch processing techniques.
-
----
-
-## 🚧 Status
-
-This project is currently under development and not yet fully functional. Basic structure and initial database connection logic are being implemented.
+The project started as a learning exercise and now functions as a complete tool for interacting with a database through Java. It serves as a strong demonstration of backend Java development, database interaction, and batch processing techniques.
 
 ---
 
-## 🧱 Goals
+## ✅ Status
 
-- Learn Java + JDBC database interaction
-- Build a simple tool to insert multiple rows into a SQL database
-- Experiment with batch operations and error handling
-- Practice backend development concepts relevant to real-world applications
+**Completed.**  
+The core functionality is fully implemented. Additional features or improvements may be added in the future.
 
 ---
 
-## 🔜 Planned Features
+## 🎯 Features
 
-- Batch insertion of rows into a SQL table
-- Randomized or generated test data
-- Simple command-line interface
-- Error handling and logging
-- Configurable database connection
+- ✅ Batch insertion of rows into any SQL table
+- ✅ Randomized data generation using [Java Faker](https://github.com/DiUS/java-faker)
+- ✅ Manual row input via command line
+- ✅ Automatic SQL generation from table metadata
+- ✅ Basic validation and error handling
+- ✅ Command-line interaction (JDBC-powered)
+- ✅ Supports auto-increment skipping
+- ✅ Configurable database access (via setters)
 
 ---
 
-## 💡 Technologies
+## 🔧 Technologies Used
 
 - Java SE 11+
 - JDBC
-- MySQL / PostgreSQL (planned)
-- Maven
+- MySQL
+- Gradle
+- Java Faker
+- **IDE: IntelliJ IDEA Community Edition**
+---
+
+## 📂 Project Structure
+
+- `src/main/java/org/example` – Core logic (inserter, validator, random generator, etc.)
+- `testing/` – Screenshots and logs of insertion inputs and resulting outputs  
+  - `manual/` – Manual insertion examples  
+  - `random/` – Randomized insertion examples
 
 ---
 
-## 🏃‍♂️ How to Run
+## 🚀 How to Run
 
-This project is still in an early stage and may not yet run successfully. Once basic functionality is in place, instructions will be added here.
-
----
-
-## 📌 Notes
-
-This is a personal learning project aimed at improving backend Java development skills. 
+1. Ensure you have Java 11+ and MySQL installed.
+2. Clone the repository.
+3. Configure database credentials using the provided setter methods.
+4. Build the project (through bash):
+   ./gradlew clean build
+  
+5. Run main method in RowInserter class.
